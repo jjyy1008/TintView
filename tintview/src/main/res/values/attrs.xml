@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TintImageView">
+        <attr name="tiv_normal_color" format="color|reference"/>
+        <attr name="tiv_pressed_color" format="color|reference"/>
+        <attr name="tiv_need_anim" format="boolean|reference"/>
+        <attr name="tiv_anim_time" format="integer|reference"/>
+    </declare-styleable>
+</resources>
