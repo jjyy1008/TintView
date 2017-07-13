@@ -11,7 +11,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.animation.LinearInterpolator;
 
@@ -21,18 +20,15 @@ import android.view.animation.LinearInterpolator;
 
 public class TintImageView extends AppCompatImageView {
 
-    private final String TAG = "TintImageView";
-
     @ColorInt
     private int normalColor;
     @ColorInt
     private int pressedColor;
-    @ColorInt
-    private int currentColor;
     private boolean needAnim;
     private long animMills;
 
-    private ValueAnimator animator;
+    private ValueAnimator pressAnimator;
+    private ValueAnimator upAnimator;
     private ArgbEvaluator argbEvaluator;
 
     private boolean isTouching;
@@ -50,17 +46,16 @@ public class TintImageView extends AppCompatImageView {
         TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.TintImageView);
         normalColor = ta.getColor(R.styleable.TintImageView_tiv_normal_color, Color.TRANSPARENT);
         pressedColor = ta.getColor(R.styleable.TintImageView_tiv_pressed_color, ContextCompat.getColor(getContext(), R.color.default_pressed_color));
-        currentColor = normalColor;
         needAnim = ta.getBoolean(R.styleable.TintImageView_tiv_need_anim, false);
-        animMills = ta.getInt(R.styleable.TintImageView_tiv_anim_time, 300);
+        animMills = ta.getInt(R.styleable.TintImageView_tiv_anim_time, 150);
         ta.recycle();
 
+        argbEvaluator = new ArgbEvaluator();
         setColorFilter(normalColor);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.d(TAG, "onTouchEvent: " + event.getAction());
         if (!isClickable()) {
             return super.onTouchEvent(event);
         }
@@ -79,44 +74,81 @@ public class TintImageView extends AppCompatImageView {
     }
 
     private void initAnimator() {
-        //second protect
-        if (animator == null) {
-            animator = new ValueAnimator();
-            argbEvaluator = new ArgbEvaluator();
-            animator.setDuration(animMills);
-            animator.setInterpolator(new LinearInterpolator());
-            animator.setRepeatMode(ValueAnimator.REVERSE);
-            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        if (pressAnimator == null) {
+            pressAnimator = new ValueAnimator();
+            pressAnimator.setDuration(animMills);
+            pressAnimator.setInterpolator(new LinearInterpolator());
+            pressAnimator.setIntValues(normalColor, pressedColor);
+            pressAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
-                    currentColor = (Integer) animation.getAnimatedValue();
+                    int currentColor = (Integer) animation.getAnimatedValue();
                     setColorFilter(currentColor);
-                    if (currentColor == pressedColor && isTouching) {
-//                        animation.cancel();
-                    }
                 }
             });
+            pressAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    if (!isTouching) {
+                        upAnimator.setEvaluator(argbEvaluator);
+                        upAnimator.start();
+                    }
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+        }
+        if (upAnimator == null) {
+            upAnimator = new ValueAnimator();
+            upAnimator.setDuration(animMills);
+            upAnimator.setInterpolator(new LinearInterpolator());
+            upAnimator.setIntValues(pressedColor, normalColor);
+            upAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    int currentColor = (Integer) animation.getAnimatedValue();
+                    setColorFilter(currentColor);
+                }
+            });
+        }
+    }
+
+    private void stopAnim() {
+        if (pressAnimator != null && pressAnimator.isRunning()) {
+            pressAnimator.cancel();
+        }
+        if (upAnimator != null && upAnimator.isRunning()) {
+            upAnimator.cancel();
         }
     }
 
     private void handleTouchAction(boolean isPress) {
         isTouching = isPress;
         if (needAnim) {
-            if (animator == null) {
-                initAnimator();
+            initAnimator();
+            if (isPress) {
+                stopAnim();
+                pressAnimator.setEvaluator(argbEvaluator);
+                pressAnimator.start();
+            } else {
+                if (!pressAnimator.isRunning()) {
+                    upAnimator.setEvaluator(argbEvaluator);
+                    upAnimator.start();
+                }
             }
-            if (!isTouching && animator.isRunning()) {
-                Log.d(TAG, "return: ");
-                return;
-            }
-            if (animator.isRunning()) {
-                animator.cancel();
-            }
-            animator.setIntValues(currentColor, isPress ? pressedColor : normalColor);
-            animator.setRepeatCount(isTouching ? 1 : 0);
-            animator.setEvaluator(argbEvaluator);
-            animator.start();
-            Log.d(TAG, "anim start");
         } else {
             setColorFilter(isPress ? pressedColor : normalColor);
         }
