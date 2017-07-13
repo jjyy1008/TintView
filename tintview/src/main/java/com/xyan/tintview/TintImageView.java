@@ -1,5 +1,6 @@
 package com.xyan.tintview;
 
+import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.animation.LinearInterpolator;
 
 /**
  * Created by chenxueqing on 2017/7/12.
@@ -32,6 +34,8 @@ public class TintImageView extends AppCompatImageView {
 
     private ValueAnimator animator;
     private ArgbEvaluator argbEvaluator;
+
+    private boolean isTouching;
 
     public TintImageView(Context context) {
         this(context, null);
@@ -79,29 +83,40 @@ public class TintImageView extends AppCompatImageView {
         if (animator == null) {
             animator = new ValueAnimator();
             argbEvaluator = new ArgbEvaluator();
-
             animator.setDuration(animMills);
+            animator.setInterpolator(new LinearInterpolator());
+            animator.setRepeatMode(ValueAnimator.REVERSE);
             animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     currentColor = (Integer) animation.getAnimatedValue();
                     setColorFilter(currentColor);
+                    if (currentColor == pressedColor && isTouching) {
+//                        animation.cancel();
+                    }
                 }
             });
         }
     }
 
     private void handleTouchAction(boolean isPress) {
+        isTouching = isPress;
         if (needAnim) {
             if (animator == null) {
                 initAnimator();
+            }
+            if (!isTouching && animator.isRunning()) {
+                Log.d(TAG, "return: ");
+                return;
             }
             if (animator.isRunning()) {
                 animator.cancel();
             }
             animator.setIntValues(currentColor, isPress ? pressedColor : normalColor);
+            animator.setRepeatCount(isTouching ? 1 : 0);
             animator.setEvaluator(argbEvaluator);
             animator.start();
+            Log.d(TAG, "anim start");
         } else {
             setColorFilter(isPress ? pressedColor : normalColor);
         }
