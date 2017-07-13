@@ -13,12 +13,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ImageView img = (ImageView) findViewById(R.id.img_view);
-        img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("cxq", "onClick: ");
-            }
-        });
+//        ImageView img = (ImageView) findViewById(R.id.img_view);
+//        img.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d("cxq", "onClick: ");
+//            }
+//        });
     }
 }
