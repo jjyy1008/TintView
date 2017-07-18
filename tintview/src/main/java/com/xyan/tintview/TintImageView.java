@@ -45,7 +45,7 @@ public class TintImageView extends AppCompatImageView {
     private void init(AttributeSet attrs) {
         TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.TintImageView);
         normalColor = ta.getColor(R.styleable.TintImageView_tiv_normal_color, Color.TRANSPARENT);
-        pressedColor = ta.getColor(R.styleable.TintImageView_tiv_pressed_color, ContextCompat.getColor(getContext(), R.color.default_pressed_color));
+        pressedColor = ta.getColor(R.styleable.TintImageView_tiv_pressed_color, ContextCompat.getColor(getContext(), R.color.default_pressed_bg_color));
         needAnim = ta.getBoolean(R.styleable.TintImageView_tiv_need_anim, false);
         animMills = ta.getInt(R.styleable.TintImageView_tiv_anim_time, 150);
         ta.recycle();

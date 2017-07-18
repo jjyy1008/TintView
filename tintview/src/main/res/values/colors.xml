@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="default_pressed_color">#5e000000</color>
+    <color name="default_pressed_bg_color">#5e000000</color>
+    <color name="default_pressed_text_color">#dadadada</color>
 </resources>

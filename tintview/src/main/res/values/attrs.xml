@@ -6,4 +6,13 @@
         <attr name="tiv_need_anim" format="boolean|reference"/>
         <attr name="tiv_anim_time" format="integer|reference"/>
     </declare-styleable>
+
+    <declare-styleable name="TintTextView">
+        <attr name="ttv_bg_normal_color" format="color|reference"/>
+        <attr name="ttv_bg_pressed_color" format="color|reference"/>
+        <attr name="ttv_text_normal_color" format="color|reference"/>
+        <attr name="ttv_text_pressed_color" format="color|reference"/>
+        <attr name="ttv_need_anim" format="boolean|reference"/>
+        <attr name="ttv_anim_time" format="integer|reference"/>
+    </declare-styleable>
 </resources>
