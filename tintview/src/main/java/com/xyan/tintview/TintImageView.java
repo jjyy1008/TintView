@@ -25,7 +25,7 @@ public class TintImageView extends AppCompatImageView {
     @ColorInt
     private int pressedColor;
     private boolean needAnim;
-    private long animMills;
+    private long animDuration;
 
     private ValueAnimator pressAnimator;
     private ValueAnimator upAnimator;
@@ -47,11 +47,32 @@ public class TintImageView extends AppCompatImageView {
         normalColor = ta.getColor(R.styleable.TintImageView_tiv_normal_color, Color.TRANSPARENT);
         pressedColor = ta.getColor(R.styleable.TintImageView_tiv_pressed_color, ContextCompat.getColor(getContext(), R.color.default_pressed_bg_color));
         needAnim = ta.getBoolean(R.styleable.TintImageView_tiv_need_anim, false);
-        animMills = ta.getInt(R.styleable.TintImageView_tiv_anim_time, 150);
+        animDuration = ta.getInt(R.styleable.TintImageView_tiv_anim_duration, 150);
         ta.recycle();
 
         argbEvaluator = new ArgbEvaluator();
         setColorFilter(normalColor);
+    }
+
+    public TintImageView setNormalColorFilter(@ColorInt int normalColor) {
+        this.normalColor = normalColor;
+        setColorFilter(normalColor);
+        return this;
+    }
+
+    public TintImageView setPressedColorFilter(@ColorInt int pressedColor) {
+        this.pressedColor = pressedColor;
+        return this;
+    }
+
+    public TintImageView setNeedAnim(boolean needAnim) {
+        this.needAnim = needAnim;
+        return this;
+    }
+
+    public TintImageView setAnimDuration(long duration) {
+        this.animDuration = duration;
+        return this;
     }
 
     @Override
@@ -76,7 +97,7 @@ public class TintImageView extends AppCompatImageView {
     private void initAnimator() {
         if (pressAnimator == null) {
             pressAnimator = new ValueAnimator();
-            pressAnimator.setDuration(animMills);
+            pressAnimator.setDuration(animDuration);
             pressAnimator.setInterpolator(new LinearInterpolator());
             pressAnimator.setIntValues(normalColor, pressedColor);
             pressAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -113,7 +134,7 @@ public class TintImageView extends AppCompatImageView {
         }
         if (upAnimator == null) {
             upAnimator = new ValueAnimator();
-            upAnimator.setDuration(animMills);
+            upAnimator.setDuration(animDuration);
             upAnimator.setInterpolator(new LinearInterpolator());
             upAnimator.setIntValues(pressedColor, normalColor);
             upAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
