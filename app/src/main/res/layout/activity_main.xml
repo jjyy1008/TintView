@@ -25,13 +25,11 @@
         android:padding="10dp"
         android:gravity="center"
         android:text="Press Test"
-        app:ttv_text_normal_color="#000"
         app:ttv_text_pressed_color="#3a000000"
-        app:ttv_bg_normal_color="#2fba2c"
         app:ttv_bg_pressed_color="#a2ffffff"
         app:ttv_need_anim="true"
         android:background="@drawable/text_bg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
 
 </LinearLayout>

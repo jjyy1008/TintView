@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.animation.LinearInterpolator;
 
@@ -47,7 +48,7 @@ public class TintImageView extends AppCompatImageView {
         normalColor = ta.getColor(R.styleable.TintImageView_tiv_normal_color, Color.TRANSPARENT);
         pressedColor = ta.getColor(R.styleable.TintImageView_tiv_pressed_color, ContextCompat.getColor(getContext(), R.color.default_pressed_bg_color));
         needAnim = ta.getBoolean(R.styleable.TintImageView_tiv_need_anim, false);
-        animDuration = ta.getInt(R.styleable.TintImageView_tiv_anim_duration, 150);
+        animDuration = ta.getInt(R.styleable.TintImageView_tiv_anim_duration, 120);
         ta.recycle();
 
         argbEvaluator = new ArgbEvaluator();
@@ -87,11 +88,20 @@ public class TintImageView extends AppCompatImageView {
             case MotionEvent.ACTION_UP:
                 handleTouchAction(false);
                 break;
+            case MotionEvent.ACTION_MOVE:
+                if (!isPointInView(event.getX(), event.getY())) {
+                    handleTouchAction(false);
+                }
+                break;
             case MotionEvent.ACTION_CANCEL:
                 handleTouchAction(false);
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    private boolean isPointInView(float x, float y) {
+        return !(x < 0 || y < 0 || x > getWidth() || y > getHeight());
     }
 
     private void initAnimator() {
@@ -157,6 +167,9 @@ public class TintImageView extends AppCompatImageView {
     }
 
     private void handleTouchAction(boolean isPress) {
+        if (isTouching == isPress) {
+            return;
+        }
         isTouching = isPress;
         if (needAnim) {
             initAnimator();

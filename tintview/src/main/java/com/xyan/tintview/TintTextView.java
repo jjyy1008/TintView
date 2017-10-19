@@ -58,7 +58,7 @@ public class TintTextView extends AppCompatTextView {
         normalTextColor = ta.getColor(R.styleable.TintTextView_ttv_text_normal_color, getCurrentTextColor());
         pressedTextColor = ta.getColor(R.styleable.TintTextView_ttv_text_pressed_color, ContextCompat.getColor(getContext(), R.color.default_pressed_text_color));
         needAnim = ta.getBoolean(R.styleable.TintTextView_ttv_need_anim, false);
-        animDuration = ta.getInt(R.styleable.TintTextView_ttv_anim_duration, 150);
+        animDuration = ta.getInt(R.styleable.TintTextView_ttv_anim_duration, 120);
 
         ta.recycle();
 
